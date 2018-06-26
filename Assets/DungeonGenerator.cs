@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DungeonGenerator : MonoBehaviour {
 
@@ -36,8 +37,10 @@ public class DungeonGenerator : MonoBehaviour {
                 bool placed = TryPlacingRoom(obj); 
                 if(placed) {
                     rooms.Add(obj);
+                    BakeNavMesh(obj);
                     break;
                 }
+
             yield return null;
             }
         }
@@ -68,13 +71,11 @@ public class DungeonGenerator : MonoBehaviour {
                     return false;
                 }
             }
-            
             return true;
-
     }
-
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    
+    void BakeNavMesh(GameObject obj) {
+        NavMeshSurface surface = obj.AddComponent<NavMeshSurface>();
+        surface.BuildNavMesh();
+    }
 }
