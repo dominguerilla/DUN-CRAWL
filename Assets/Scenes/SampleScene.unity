@@ -143,9 +143,9 @@ MonoBehaviour:
   numberOfRooms: 20
   roomPlacementRetries: 20
   minDistanceBetweenRooms: 10
-  minRoomWidth: 10
+  minRoomWidth: 5
   maxRoomWidth: 20
-  minRoomLength: 10
+  minRoomLength: 5
   maxRoomLength: 20
   topLeftCorner: {fileID: 1972049373}
   bottomRightCorner: {fileID: 849682407}
