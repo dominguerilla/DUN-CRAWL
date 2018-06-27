@@ -177,7 +177,8 @@ MonoBehaviour:
   anchor: {fileID: 849682407}
   width: 10
   length: 10
-  floor: {fileID: 1873319896045170, guid: 417bf7721a2cb7b4fa27e613e1a5b08b, type: 2}
+  floorPrefab: {fileID: 1873319896045170, guid: 417bf7721a2cb7b4fa27e613e1a5b08b,
+    type: 2}
 --- !u!1 &170076733
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,7 +343,7 @@ SphereCollider:
   m_GameObject: {fileID: 849682403}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -352,7 +353,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 849682403}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
