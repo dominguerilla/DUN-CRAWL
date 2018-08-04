@@ -38,6 +38,8 @@ public class AgentGenerate1 : MonoBehaviour {
     public int width = 50;
     public int length = 50;
 	
+    [Header("Algorithm Tweaks")]
+    public float changeDirDelta = 5f;
     
     // Use this for initialization
 	void Start () {
@@ -49,10 +51,10 @@ public class AgentGenerate1 : MonoBehaviour {
         floorPieces = new List<GameObject>();
         grid = new GameObject[width,length];
         floorParent = new GameObject("Floor Pieces");
-        GenerateDungeon();
+        StartCoroutine(GenerateDungeon());
     }
 
-    void GenerateDungeon(){
+    IEnumerator GenerateDungeon(){
         // start in the center
         Vector2 currentPos = new Vector2(width/2, length/2);
 
@@ -67,16 +69,22 @@ public class AgentGenerate1 : MonoBehaviour {
             direction = pickDirection(changeDirChance, direction);
             
             if(pastDirection == direction){
-                changeDirChance += 5f;
+                changeDirChance += changeDirDelta;
                 Debug.Log("changeDirChance now at " + changeDirChance + "%");
             }else{
                 changeDirChance = 0.0f;
                 Debug.Log("changeDirChance reset to " + changeDirChance + "%");
             }
             
-            currentFloor = AddFloor(currentFloor, direction);
+            GameObject newFloor;
+            do{
+                newFloor = AddFloor(currentFloor, direction);
+                yield return null;
+            } while(newFloor == null);
             
-            placedRoomsNum += 1;
+            currentFloor = newFloor;
+            yield return null;
+        placedRoomsNum += 1;
         }while (placedRoomsNum < numberOfRooms);
     }
     
@@ -123,22 +131,30 @@ public class AgentGenerate1 : MonoBehaviour {
                 break;
             case 3:
                 // downwards
-                nextLocation = new Vector3(0f, 0f, box.size.z);
+                nextLocation = new Vector3(0f, 0f, -box.size.z);
                 break;
             case 4:
                 // to the left
-                nextLocation = new Vector3(box.size.x, 0f, 0f);
+                nextLocation = new Vector3(-box.size.x, 0f, 0f);
                 break;
             default:
                 Debug.LogError("invalid direction specified");
                 return null;
         }
 
-        GameObject floor = GameObject.Instantiate<GameObject>(floorPrefab);
-        floorPieces.Add(floor);
-        floor.transform.parent = floorParent.transform;
+        Vector3 spawnLocation = previousFloor.transform.position + nextLocation;
 
-        floor.transform.position = previousFloor.transform.position + nextLocation;
+        Collider[] colliders = Physics.OverlapBox(spawnLocation, box.size * 0.9f);
+        foreach (Collider col in colliders){
+            Floor f = col.GetComponent<Floor>();
+            if(f){
+                Debug.Log("floor collision detected!");
+                return null;
+            }
+        }
+        GameObject floor = GameObject.Instantiate<GameObject>(floorPrefab, spawnLocation, transform.rotation, floorParent.transform);
+
+        floorPieces.Add(floor);
         return floor;
     }
     /// <summary>
@@ -154,7 +170,7 @@ public class AgentGenerate1 : MonoBehaviour {
             // return different direction
             int direction;
             do{
-                direction = (int)Random.Range(1,4);
+                direction = (int)Random.Range(1,5);
             }while(direction == currentDirection);
 
             Debug.Log("Changing direction to " + direction);
@@ -166,33 +182,4 @@ public class AgentGenerate1 : MonoBehaviour {
         }
     }
 
-    IEnumerator GenerateFloor() {
-        floorParent = new GameObject("Floor Pieces");
-        GameObject firstFloor = GameObject.Instantiate<GameObject>(floorPrefab);
-        floorPieces.Add(firstFloor);
-        firstFloor.transform.parent = floorParent.transform;
-
-        BoxCollider firstBox = firstFloor.GetComponent<BoxCollider>();
-        Vector3 topLeftCornerOfFloor = anchor.transform.TransformPoint(firstBox.center - new Vector3(-firstBox.size.x / 2, 0, firstBox.size.z / 2));
-        firstFloor.transform.position = topLeftCornerOfFloor; 
-
-        //yield return new WaitForSeconds(0.1f);
-
-        for(int z = 0; z < length; z++) {
-            for(int x = 0; x < width; x++) {
-                //skip the first floor piece, since we already made it
-                if(x == 0 && z == 0)
-                    continue;
-                GameObject currentFloor = GameObject.Instantiate<GameObject>(floorPrefab);
-                currentFloor.transform.position = firstFloor.transform.position + new Vector3(firstBox.size.x * x, 0, -firstBox.size.z * z);
-                int rotation = Random.Range(0, 4);
-                currentFloor.transform.Rotate(currentFloor.transform.up, 90 * rotation);
-                floorPieces.Add(currentFloor);
-                currentFloor.transform.parent = floorParent.transform;
-                //yield return new WaitForSeconds(0.1f);
-            }
-        }
-
-        yield return null;
-    }
 }
