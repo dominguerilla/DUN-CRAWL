@@ -146,7 +146,7 @@ MonoBehaviour:
   floorLength: 250
   width: 10
   length: 10
-  changeDirDelta: 10
+  changeDirDelta: 2.5
 --- !u!4 &156306675
 Transform:
   m_ObjectHideFlags: 0

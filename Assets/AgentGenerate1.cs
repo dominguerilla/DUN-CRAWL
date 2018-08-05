@@ -63,7 +63,6 @@ public class AgentGenerate1 : MonoBehaviour {
         int placedFloorCount = 0;
         int direction = pickDirection(100f);
         GameObject currentFloor = PlaceFloor(width/2, length/2);
-        Debug.Log("Starting in direction " + direction);
 
         do{
             GameObject newFloor;
@@ -150,7 +149,6 @@ public class AgentGenerate1 : MonoBehaviour {
         foreach (Collider col in colliders){
             Floor f = col.GetComponent<Floor>();
             if(f){
-                Debug.Log("floor collision detected!");
                 return null;
             }
         }
@@ -179,7 +177,6 @@ public class AgentGenerate1 : MonoBehaviour {
             return direction;
         }else{
             // return same direction
-            Debug.Log("Maintaining direction " + currentDirection);
             return currentDirection;
         }
     }
