@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Physics = RotaryHeart.Lib.PhysicsExtension.Physics;
 
 /// <summary>
 /// The Blind Digger
@@ -34,7 +35,7 @@ public class AgentGenerate1 : MonoBehaviour {
     GameObject firstFloor = null;
 
     public GameObject floorPrefab;
-    public int numberOfRooms;
+    public int floorLength;
     public int width = 50;
     public int length = 50;
 	
@@ -59,33 +60,34 @@ public class AgentGenerate1 : MonoBehaviour {
         Vector2 currentPos = new Vector2(width/2, length/2);
 
         float changeDirChance = 0;
-        int placedRoomsNum = 0;
+        int placedFloorCount = 0;
         int direction = pickDirection(100f);
         GameObject currentFloor = PlaceFloor(width/2, length/2);
         Debug.Log("Starting in direction " + direction);
 
         do{
-            int pastDirection = direction;
-            direction = pickDirection(changeDirChance, direction);
-            
-            if(pastDirection == direction){
-                changeDirChance += changeDirDelta;
-                Debug.Log("changeDirChance now at " + changeDirChance + "%");
-            }else{
-                changeDirChance = 0.0f;
-                Debug.Log("changeDirChance reset to " + changeDirChance + "%");
-            }
-            
             GameObject newFloor;
+            int pastDirection;
             do{
+                pastDirection = direction;
+                direction = pickDirection(changeDirChance, direction);
+                // update percentages
+                if (pastDirection == direction){
+                    changeDirChance += changeDirDelta;
+                    Debug.Log("changeDirChance now at " + changeDirChance + "%");
+                }else{
+                    changeDirChance = 0.0f;
+                    Debug.Log("changeDirChance reset to " + changeDirChance + "%");
+                }
                 newFloor = AddFloor(currentFloor, direction);
                 yield return null;
             } while(newFloor == null);
-            
             currentFloor = newFloor;
+            placedFloorCount += 1;
+
+            
             yield return null;
-        placedRoomsNum += 1;
-        }while (placedRoomsNum < numberOfRooms);
+        }while (placedFloorCount < floorLength);
     }
     
     /// <summary>
@@ -142,9 +144,9 @@ public class AgentGenerate1 : MonoBehaviour {
                 return null;
         }
 
-        Vector3 spawnLocation = previousFloor.transform.position + nextLocation;
+        Vector3 spawnLocation = previousFloor.transform.position + (nextLocation * 1.03f);
 
-        Collider[] colliders = Physics.OverlapBox(spawnLocation, box.size * 0.9f);
+        Collider[] colliders = Physics.OverlapBox(spawnLocation, box.size * 0.5f, RotaryHeart.Lib.PhysicsExtension.Physics.PreviewCondition.Editor);
         foreach (Collider col in colliders){
             Floor f = col.GetComponent<Floor>();
             if(f){

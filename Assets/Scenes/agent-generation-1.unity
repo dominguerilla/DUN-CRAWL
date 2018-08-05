@@ -143,7 +143,7 @@ MonoBehaviour:
   anchor: {fileID: 849682407}
   floorPrefab: {fileID: 1873319896045170, guid: 417bf7721a2cb7b4fa27e613e1a5b08b,
     type: 2}
-  numberOfRooms: 100
+  floorLength: 250
   width: 10
   length: 10
   changeDirDelta: 10
