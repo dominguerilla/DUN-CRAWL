@@ -21,6 +21,14 @@ public class GridCell {
         return !tile;
     }
 
+    public int GetXPosition() {
+        return x;
+    }
+
+    public int GetZPosition() {
+        return z;
+    }
+
     /// <summary>
     /// Note that the prefab should have a box collider. All cells of the same grid should have the same tile prefab.
     /// </summary>
@@ -35,6 +43,7 @@ public class GridCell {
         this.tileCenter = gridDLeftCorner + new Vector3((box.size.x) * this.x, gridDLeftCorner.y, (box.size.z) * this.z);
         
         this.tile.transform.position = this.tileCenter;
+        
         return this.tile;
     }
 

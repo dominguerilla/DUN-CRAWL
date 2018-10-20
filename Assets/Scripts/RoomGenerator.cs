@@ -5,77 +5,79 @@ using UnityEngine.AI;
 
 public class RoomGenerator : MonoBehaviour {
 
-    public int numberOfRooms = 3;
-    public int roomPlacementRetries = 10;
-    public float minDistanceBetweenRooms = 4.0f;
+    public GameObject tilePrefab;
+    public int width, height = 100;
 
-    public float minRoomWidth = 5f;
-    public float maxRoomWidth = 10f;
+    public int numberOfRooms = 10;
+    public int roomPlacementRetries = 50;
 
-    public float minRoomLength = 5f;
-    public float maxRoomLength = 10f;
+    public int minRoomWidth = 5;
+    public int maxRoomWidth = 10;
 
-    public Transform topLeftCorner, bottomRightCorner;
+    public int minRoomLength = 5;
+    public int maxRoomLength = 10;
 
-    private List<GameObject> rooms;
+    Grid grid;
 
-	// Use this for initialization
-	void Start () {
-        if(!topLeftCorner || !bottomRightCorner) {
-            Debug.LogError("Maze corners not assigned!");
+    private void Start() {
+        if(maxRoomWidth >= width || maxRoomLength >= height) {
+            Debug.LogError("Invalid maxRoomWidth/Length; must be less than width/height!");
             Destroy(this);
         }
 
-        rooms = new List<GameObject>();
-        StartCoroutine(GenerateRooms());
-	}
-
-	IEnumerator GenerateRooms() {
-		for(int i = 0; i < numberOfRooms; i++) {
-            for(int tries = 0; tries < roomPlacementRetries; tries++) {
-                GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                bool placed = TryPlacingRoom(obj); 
-                if(placed) {
-                    rooms.Add(obj);
-                    BakeNavMesh(obj);
-                    break;
-                }
-
-            yield return null;
-            }
-        }
-        Debug.Log("Rooms placed: " + rooms.Count);
+		grid = new Grid(this.gameObject.transform.position, tilePrefab, width, height);
+        GenerateRooms();
     }
 
-    bool TryPlacingRoom(GameObject obj) {
-            // Size
-            float xSize = Random.Range(minRoomWidth, maxRoomWidth);
-            float zSize = Random.Range(minRoomLength, maxRoomLength);
-            obj.transform.localScale = new Vector3(xSize, 1f, zSize);
+    void GenerateRooms() {
+        int numRooms = 0;
+        for(int tries = 0; tries < roomPlacementRetries && numRooms < numberOfRooms; tries++) {
 
-            // Position
-            float X = Random.Range(topLeftCorner.position.x, bottomRightCorner.position.x);
-            float Z = Random.Range(topLeftCorner.position.z, bottomRightCorner.position.z);
-            obj.transform.position = new Vector3(X, 0f, Z);
+            int randomX = Random.Range(0, width - 1);
+            int randomZ = Random.Range(0, height - 1);
 
-            foreach(GameObject room in rooms) {
-                Collider newRoom = obj.GetComponent<Collider>();
-                Collider existingRoom = room.GetComponent<Collider>();
-                
-                // get closest point between the two
-                Vector3 newRoomClosestPoint = newRoom.bounds.ClosestPoint(room.transform.position);
-                Vector3 oldRoomClosestPoint = existingRoom.bounds.ClosestPoint(newRoom.transform.position);
+            int randomWidth = Random.Range(minRoomWidth, maxRoomWidth);
+            int randomHeight = Random.Range(minRoomLength, maxRoomLength);
 
-                if(newRoom.bounds.Intersects(existingRoom.bounds) || Vector3.Distance(newRoomClosestPoint, oldRoomClosestPoint) < minDistanceBetweenRooms) {
-                    Destroy(obj);
+            GridCell currentCell = grid.GetCell(randomX, randomZ);
+            if(canPlaceRoom(currentCell, randomWidth, randomHeight)){
+                PlaceRoom(currentCell, randomWidth, randomHeight);
+                numRooms++;
+            }else {
+                continue;
+            }
+        }
+        Debug.Log("Finished placing " + numRooms + " rooms.");
+    }
+
+    void PlaceRoom(GridCell startingCell, int width, int length) {
+        int startingXPosition = startingCell.GetXPosition();
+        int startingZPosition = startingCell.GetZPosition();
+        Debug.Log(string.Format("Creating {0} by {1} room at ({2},{3})", width, length, startingXPosition, startingZPosition));
+        for(int x = startingXPosition; x < startingXPosition + width; x++) {
+            for(int z = startingZPosition; z < startingZPosition + length; z++) {
+                grid.PlaceTileInCell(x, z);
+            }
+        } 
+    }
+
+    bool canPlaceRoom(GridCell cell, int width, int length) {
+        // check if the proposed room is in bounds
+        int xPosition = cell.GetXPosition();
+        int zPosition = cell.GetZPosition();
+        if (xPosition + width >= grid.GetTotalWidth() || zPosition + length >= grid.GetTotalLength()) {
+            return false;
+        }
+
+        // check if all cells where the room would be are empty
+        for(int i = xPosition; i < width; i++) {
+            for(int j = zPosition; j < length; j++) {
+                if(!grid.GetCell(i, j).IsEmpty()) {
                     return false;
                 }
             }
-            return true;
+        }
+        return true;
     }
-    
-    void BakeNavMesh(GameObject obj) {
-        NavMeshSurface surface = obj.AddComponent<NavMeshSurface>();
-        surface.BuildNavMesh();
-    }
+
 }

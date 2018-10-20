@@ -12,9 +12,10 @@ public class GridFloorGenerator : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		grid = new Grid(this.gameObject.transform.position, tilePrefab, width, height);
-	    grid.PlaceInCell(tilePrefab, 0, 0);	
-	    grid.PlaceInCell(tilePrefab, 0, 1);	
-	    grid.PlaceInCell(tilePrefab, 1, 0);	
+	    grid.PlaceTileInCell(0, 0);	
+	    grid.PlaceTileInCell(0, 1);	
+	    grid.PlaceTileInCell(1, 0);	
+	    grid.PlaceTileInCell(2, 2);	
 	}
 	
 	// Update is called once per frame

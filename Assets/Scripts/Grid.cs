@@ -10,6 +10,7 @@ public class Grid {
     GridCell[][] cells;
     GameObject tile;
 
+
     public Grid(Vector3 parentObject, GameObject tilePrefab, int width, int depth) {
 
         this.lowerLeftCorner = parentObject;
@@ -26,15 +27,27 @@ public class Grid {
             }
         }
     }
+    
+    public GameObject PlaceTileInCell(int x, int z) {
 
-    public GameObject PlaceInCell(GameObject prefab, int x, int z) {
-
-        GameObject placedObj = cells[x][z].PlaceInCell(prefab);
+        GameObject placedObj = cells[x][z].PlaceInCell(tile);
 
         return placedObj;
     }
 
     public Vector3 GetLowerLeftCorner() {
         return lowerLeftCorner;
+    }
+
+    public GridCell GetCell(int x, int z) {
+        return this.cells[x][z];
+    }
+
+    public int GetTotalWidth() {
+        return this.x;
+    }
+
+    public int GetTotalLength() {
+        return this.z;
     }
 }
