@@ -69,14 +69,20 @@ public class RoomGenerator : MonoBehaviour {
             return false;
         }
 
-        // check if all cells where the room would be are empty
-        for(int i = xPosition; i < width; i++) {
-            for(int j = zPosition; j < length; j++) {
-                if(!grid.GetCell(i, j).IsEmpty()) {
+        // check if all cells where the room would be are empty, and ensures a 1 cell gap between rooms.
+        for(int i = xPosition - 1; i < xPosition + width + 1; i++) {
+            for(int j = zPosition - 1; j < zPosition + length + 1; j++) {
+                GridCell currentCell = grid.GetCell(i, j);
+                if(currentCell == null) {
+                    continue;
+                }
+
+                if(!currentCell.IsEmpty()) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 

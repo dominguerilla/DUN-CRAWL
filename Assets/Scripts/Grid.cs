@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Grid {
-    int x;
-    int z;
+    int maxWidth;
+    int maxLength;
 
     Vector3 lowerLeftCorner;
     GridCell[][] cells;
     GameObject tile;
 
 
-    public Grid(Vector3 parentObject, GameObject tilePrefab, int width, int depth) {
+    public Grid(Vector3 parentObject, GameObject tilePrefab, int width, int length) {
 
         this.lowerLeftCorner = parentObject;
         this.tile = tilePrefab;
-        this.x = width;
-        this.z = depth;
+        this.maxWidth = width;
+        this.maxLength = length;
 
         // populate all cells with empty cell objects
-        cells = new GridCell[x][];
-        for(int i = 0; i < x; i++) {
-            cells[i] = new GridCell[z];
-            for(int j = 0; j < z; j++) {
+        cells = new GridCell[maxWidth][];
+        for(int i = 0; i < maxWidth; i++) {
+            cells[i] = new GridCell[maxLength];
+            for(int j = 0; j < maxLength; j++) {
                 cells[i][j] = new GridCell(tile, this, i, j);
             }
         }
@@ -39,15 +39,26 @@ public class Grid {
         return lowerLeftCorner;
     }
 
+    /// <summary>
+    /// Returns a cell given its x and z coordinates, or null if the x/z is invalid.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
     public GridCell GetCell(int x, int z) {
+        //input validation
+        if(x >= this.maxWidth || z >= this.maxLength || x < 0 || z < 0) {
+            return null;
+        }
+
         return this.cells[x][z];
     }
 
     public int GetTotalWidth() {
-        return this.x;
+        return this.maxWidth;
     }
 
     public int GetTotalLength() {
-        return this.z;
+        return this.maxLength;
     }
 }

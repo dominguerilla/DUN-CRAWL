@@ -8,6 +8,7 @@ public class GridCell {
     GameObject tile;
     Grid parentGrid;
     Vector3 tileCenter;
+    bool placedInCell = false;
     
     public GridCell(GameObject tilePrefab, Grid parentGrid, int xCoordinate, int zCoordinate) {
         this.x = xCoordinate;
@@ -18,7 +19,7 @@ public class GridCell {
     }
 
     public bool IsEmpty() {
-        return !tile;
+        return !placedInCell;
     }
 
     public int GetXPosition() {
@@ -43,8 +44,9 @@ public class GridCell {
         this.tileCenter = gridDLeftCorner + new Vector3((box.size.x) * this.x, gridDLeftCorner.y, (box.size.z) * this.z);
         
         this.tile.transform.position = this.tileCenter;
-        
+        placedInCell = true;
         return this.tile;
     }
+
 
 }
