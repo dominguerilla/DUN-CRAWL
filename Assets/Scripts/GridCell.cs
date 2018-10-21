@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class GridCell {
     
+    public enum Neighbor {
+        UPPER,
+        LOWER,
+        LEFT,
+        RIGHT
+    }
+
     int x, z;
     GameObject tile;
     Grid parentGrid;
@@ -48,5 +55,18 @@ public class GridCell {
         return this.tile;
     }
 
-
+    public GridCell GetNeighbor(Neighbor neighbor) {
+        switch(neighbor) {
+            case Neighbor.UPPER:
+                return parentGrid.GetCell(this.x, this.z + 1);
+            case Neighbor.LOWER:
+                return parentGrid.GetCell(this.x, this.z - 1);
+            case Neighbor.LEFT:
+                return parentGrid.GetCell(this.x - 1, this.z);
+            case Neighbor.RIGHT:
+                return parentGrid.GetCell(this.x + 1, this.z);
+            default:
+                return null;
+        }
+    }
 }
