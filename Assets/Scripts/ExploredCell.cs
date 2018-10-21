@@ -1,21 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ExploredCell {
     
     GridCell cell;
-    Stack<GridCell> unexploredNeighbors;
+    List<GridCell> unexploredNeighbors;
+    System.Random random;
 
-    public ExploredCell(GridCell cell) {
+    public ExploredCell(GridCell cell, System.Random random = null) {
         this.cell = cell;
-        unexploredNeighbors = new Stack<GridCell>();
+        if(random == null){
+            random = new System.Random();
+        }else{
+            this.random = random;
+        }
+        unexploredNeighbors = new List<GridCell>();
 
         int[] directions = { 0, 1, 2, 3 };
         foreach(int direction in directions) {
             GridCell neighbor = cell.GetNeighbor((GridCell.Neighbor)direction); 
             if(neighbor != null && neighbor.IsEmpty()) {
-                unexploredNeighbors.Push(neighbor);
+                unexploredNeighbors.Add(neighbor);
             }
         }
     }
@@ -24,9 +31,25 @@ public class ExploredCell {
         return cell.PlaceInCell(prefab);
     }
 
-    public GridCell GetRandomNeighbor() {
-        GridCell.Neighbor neighbor = (GridCell.Neighbor)Random.Range(0, 3);
-        return cell.GetNeighbor(neighbor);
+    /// <summary>
+    /// Returns a random unexplored empty neighbor, or null if there are none available.
+    /// </summary>
+    /// <returns></returns>
+    public GridCell GetRandomEmptyNeighbor() {
+        GridCell neighbor = null;
+        while (unexploredNeighbors.Count > 0){
+            neighbor = unexploredNeighbors[random.Next(unexploredNeighbors.Count)];
+            if(neighbor.IsEmpty()){
+                break;
+            }else{
+                unexploredNeighbors.Remove(neighbor);
+            }
+        }
+        return neighbor;
+    }
+
+    public GridCell GetCell(){
+        return cell;
     }
 
 }
