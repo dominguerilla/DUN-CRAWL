@@ -18,6 +18,8 @@ public class RoomGenerator : MonoBehaviour {
     public int maxRoomLength = 10;
 
     Grid grid;
+    List<GameObject> rooms;
+    GameObject roomsObject;
 
     private void Start() {
         if(maxRoomWidth >= width || maxRoomLength >= height) {
@@ -26,6 +28,8 @@ public class RoomGenerator : MonoBehaviour {
         }
 
 		grid = new Grid(this.gameObject.transform.position, tilePrefab, width, height);
+        rooms = new List<GameObject>();
+        roomsObject = new GameObject("Rooms");
         GenerateRooms();
     }
 
@@ -54,9 +58,13 @@ public class RoomGenerator : MonoBehaviour {
         int startingXPosition = startingCell.GetXPosition();
         int startingZPosition = startingCell.GetZPosition();
         Debug.Log(string.Format("Creating {0} by {1} room at ({2},{3})", width, length, startingXPosition, startingZPosition));
-        for(int x = startingXPosition; x < startingXPosition + width; x++) {
+        GameObject room = new GameObject("Room");
+        room.transform.parent = roomsObject.transform;
+        rooms.Add(room);
+        for (int x = startingXPosition; x < startingXPosition + width; x++) {
             for(int z = startingZPosition; z < startingZPosition + length; z++) {
-                grid.PlaceTileInCell(x, z);
+                GameObject tile = grid.PlaceTileInCell(x, z);
+                tile.transform.parent = room.transform;
             }
         } 
     }

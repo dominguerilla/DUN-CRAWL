@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 156306675}
-  - component: {fileID: 156306674}
   - component: {fileID: 156306676}
   m_Layer: 0
   m_Name: Dungeon Master
@@ -130,20 +129,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &156306674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 156306673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a78a04c8d2ba804c903664095deb1a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 1220083958639030, guid: 234a052ba6c8d334882d24340e579d35, type: 2}
-  width: 10
-  height: 10
 --- !u!4 &156306675
 Transform:
   m_ObjectHideFlags: 0
@@ -171,8 +156,8 @@ MonoBehaviour:
   tilePrefab: {fileID: 1220083958639030, guid: 234a052ba6c8d334882d24340e579d35, type: 2}
   width: 100
   height: 100
-  numberOfRooms: 10
-  roomPlacementRetries: 10
+  numberOfRooms: 30
+  roomPlacementRetries: 100
   minRoomWidth: 5
   maxRoomWidth: 10
   minRoomLength: 5
@@ -291,7 +276,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 12.50755
+  orthographic size: 123.38188
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -314,7 +299,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_LocalRotation: {x: 0.2355796, y: 0.43354347, z: -0.11862097, w: 0.8616679}
-  m_LocalPosition: {x: -114.81, y: 37.7, z: 3.34}
+  m_LocalPosition: {x: -7, y: 87.5, z: 40.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
