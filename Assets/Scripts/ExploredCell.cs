@@ -6,7 +6,6 @@ using System;
 public class ExploredCell {
     
     GridCell cell;
-    List<GridCell> unexploredNeighbors;
     System.Random random;
 
     public ExploredCell(GridCell cell, System.Random random = null) {
@@ -16,36 +15,58 @@ public class ExploredCell {
         }else{
             this.random = random;
         }
-        unexploredNeighbors = new List<GridCell>();
 
-        int[] directions = { 0, 1, 2, 3 };
-        foreach(int direction in directions) {
-            GridCell neighbor = cell.GetNeighbor((GridCell.Neighbor)direction); 
-            if(neighbor != null && neighbor.IsEmpty()) {
-                unexploredNeighbors.Add(neighbor);
-            }
-        }
     }
 
     public GameObject PlaceInCell(GameObject prefab) {
         return cell.PlaceInCell(prefab);
     }
+    
 
     /// <summary>
-    /// Returns a random unexplored empty neighbor, or null if there are none available.
+    /// Returns a random empty neighbor with three empty neighbors, or null if there are none available.
     /// </summary>
     /// <returns></returns>
-    public GridCell GetRandomEmptyNeighbor() {
+    public GridCell GetCandidateNeighbor() {
         GridCell neighbor = null;
-        while (unexploredNeighbors.Count > 0){
-            neighbor = unexploredNeighbors[random.Next(unexploredNeighbors.Count)];
-            if(neighbor.IsEmpty()){
+        List<GridCell> candidateNeighbors = GetEmptyNeighbors(this.cell);
+        /*
+        Debug.Log(String.Format("Cell ({0}, {1}) has {2} empty neighbors.", 
+            this.cell.GetXPosition(), 
+            this.cell.GetZPosition(),
+            candidateNeighbors.Count));
+        */
+        while(candidateNeighbors.Count > 0 && neighbor == null){
+            // check if random neighbor has at least three empty neighbors
+            GridCell tempNeighbor = candidateNeighbors[random.Next(candidateNeighbors.Count)];
+            List<GridCell> tempEmptyNeighbors = GetEmptyNeighbors(tempNeighbor);
+            if(tempEmptyNeighbors.Count >= 3){
+                /*
+                Debug.Log(String.Format("Choosing neighbor ({0}, {1}), with {2} empty neighbors.", 
+                    tempNeighbor.GetXPosition(), 
+                    tempNeighbor.GetZPosition(),
+                    tempEmptyNeighbors.Count));
+                */
+                neighbor = tempNeighbor;
                 break;
             }else{
-                unexploredNeighbors.Remove(neighbor);
+                candidateNeighbors.Remove(tempNeighbor);
             }
         }
         return neighbor;
+    }
+
+    // should probably be a static function or not in this class
+    public List<GridCell> GetEmptyNeighbors(GridCell targetCell){
+        List<GridCell> emptyNeighbors = new List<GridCell>();
+        int[] directions = { 0, 1, 2, 3 };
+        foreach (int direction in directions) {
+            GridCell otherNeighbor = targetCell.GetNeighbor((GridCell.Neighbor)direction); 
+            if(otherNeighbor != null && otherNeighbor.IsEmpty()) {
+                emptyNeighbors.Add(otherNeighbor);
+            }
+        }
+        return emptyNeighbors;
     }
 
     public GridCell GetCell(){

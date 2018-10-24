@@ -22,28 +22,30 @@ public class GrowingTreeGenerator : MonoBehaviour {
 	}
 
     IEnumerator GenerateCorridors() {
-        Stack<ExploredCell> cellQueue = new Stack<ExploredCell>();
+        Stack<ExploredCell> cellStack = new Stack<ExploredCell>();
         int randomX = UnityEngine.Random.Range(0, gridWidth - 1);
         int randomZ = UnityEngine.Random.Range(0, gridLength - 1);
 
         ExploredCell firstCell = new ExploredCell(grid.GetCell(randomX, randomZ), this.random);
-        cellQueue.Push(firstCell);
+        //Debug.Log("Placing first corridor at " + randomX + ", " + randomZ);
+        cellStack.Push(firstCell);
         firstCell.PlaceInCell(tilePrefab);
 
-        while(cellQueue.Count > 0) {
-            ExploredCell currentCell = cellQueue.Peek();
-            GridCell neighbor = currentCell.GetRandomEmptyNeighbor();
+        while(cellStack.Count > 0) {
+            ExploredCell currentCell = cellStack.Peek();
+            GridCell neighbor = currentCell.GetCandidateNeighbor();
             if(neighbor == null){
-                currentCell = cellQueue.Pop();
-                continue;
-            }else{
+                currentCell = cellStack.Pop();
+                continue; 
+            }else {
                 // push neighbor onto stack
                 ExploredCell newCell = new ExploredCell(neighbor, this.random);
-                cellQueue.Push(newCell);
+                cellStack.Push(newCell);
                 newCell.PlaceInCell(tilePrefab);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForEndOfFrame();
             }
         }
-    }
 
+        Debug.Log("Finished generating corridors.");
+    }
 }
