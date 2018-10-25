@@ -7,6 +7,8 @@ public class GrowingTreeGenerator : MonoBehaviour {
 
     public GameObject tilePrefab;
     public int gridWidth, gridLength;
+    public int trimLength;
+
     Grid grid;
     System.Random random;
 
@@ -47,5 +49,41 @@ public class GrowingTreeGenerator : MonoBehaviour {
         }
 
         Debug.Log("Finished generating corridors.");
+        StartCoroutine(TrimTree());
     }
+
+    IEnumerator TrimTree(){
+        Debug.Log("Trimming tree...");
+        for(int i = 0; i < trimLength; i++){
+            for(int x = 0; x < grid.GetTotalLength(); x++){
+                for(int z = 0; z < grid.GetTotalWidth(); z++){
+                    TrimCell(x,z);
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+        }
+        Debug.Log("Finished trimming tree.");
+    }
+
+    void TrimCell(int x, int z){
+        GridCell cell = grid.GetCell(x, z);
+        int[] directions = { 0, 1, 2, 3 };
+
+        int numberOfNeighbors = 0;
+        foreach (int direction in directions){
+            GridCell neighbor = cell.GetNeighbor((GridCell.Neighbor)direction);
+            if(neighbor == null || neighbor.IsEmpty()){
+                numberOfNeighbors++;
+            }
+        }
+
+        if(numberOfNeighbors >=3){
+            Debug.Log(string.Format("Trimmed ({0}, {1})", cell.GetXPosition(), cell.GetZPosition()));
+            GameObject floorObj = cell.GetTile();
+            Destroy(floorObj);
+            cell.ClearCellFlag();
+        }
+    }
+
+    
 }

@@ -17,11 +17,10 @@ public class GridCell {
     Vector3 tileCenter;
     bool placedInCell = false;
     
-    public GridCell(GameObject tilePrefab, Grid parentGrid, int xCoordinate, int zCoordinate) {
+    public GridCell(Grid parentGrid, int xCoordinate, int zCoordinate) {
         this.x = xCoordinate;
         this.z = zCoordinate;
 
-        this.tile = tilePrefab;
         this.parentGrid = parentGrid;
     }
 
@@ -35,6 +34,17 @@ public class GridCell {
 
     public int GetZPosition() {
         return z;
+    }
+
+    public GameObject GetTile(){
+        return this.tile;
+    }
+
+    public void ClearCellFlag(){
+        if(!this.placedInCell){
+            this.placedInCell = false;
+            this.tile = null;
+        }
     }
 
     /// <summary>

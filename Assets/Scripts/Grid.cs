@@ -23,7 +23,7 @@ public class Grid {
         for(int i = 0; i < maxWidth; i++) {
             cells[i] = new GridCell[maxLength];
             for(int j = 0; j < maxLength; j++) {
-                cells[i][j] = new GridCell(tile, this, i, j);
+                cells[i][j] = new GridCell(this, i, j);
             }
         }
     }

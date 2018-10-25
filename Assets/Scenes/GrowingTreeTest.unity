@@ -141,8 +141,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 1220083958639030, guid: 234a052ba6c8d334882d24340e579d35, type: 2}
-  gridWidth: 30
-  gridLength: 30
+  gridWidth: 15
+  gridLength: 15
+  trimLength: 1
 --- !u!4 &156306675
 Transform:
   m_ObjectHideFlags: 0
