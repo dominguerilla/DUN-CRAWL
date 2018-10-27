@@ -12,16 +12,21 @@ public class GrowingTreeGenerator : MonoBehaviour {
     Grid grid;
     System.Random random;
 
-	// Use this for initialization
-	void Start () {
+    public void SetGrid(Grid grid){
+        this.grid = grid;
+    }
+    
+    public void StartCorridorGeneration(Grid grid){
+        this.grid = grid;
+
         if(!tilePrefab) {
             Debug.LogError("Tile prefab must be specified!");
             Destroy(this);
         }
         random = new System.Random();
-        grid = new Grid(this.gameObject.transform.position, tilePrefab, gridWidth, gridLength);
-	    StartCoroutine(GenerateCorridors());	
-	}
+        corridorParent = new GameObject("Corridors");
+        StartCoroutine(GenerateCorridors());
+    }
 
     IEnumerator GenerateCorridors() {
         Stack<ExploredCell> cellStack = new Stack<ExploredCell>();
@@ -78,7 +83,6 @@ public class GrowingTreeGenerator : MonoBehaviour {
         }
 
         if(numberOfNeighbors >=3){
-            Debug.Log(string.Format("Trimmed ({0}, {1})", cell.GetXPosition(), cell.GetZPosition()));
             GameObject floorObj = cell.GetTile();
             Destroy(floorObj);
             cell.ClearCellFlag();

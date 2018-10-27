@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class RoomGenerator : MonoBehaviour {
 
     public GameObject tilePrefab;
-    public int width, height = 100;
+    public int gridWidth, gridLength = 100;
 
     public int numberOfRooms = 10;
     public int roomPlacementRetries = 50;
@@ -20,25 +20,22 @@ public class RoomGenerator : MonoBehaviour {
     Grid grid;
     List<GameObject> rooms;
     GameObject roomsObject;
+    
+    public void GenerateRooms(Grid grid) {
+        this.grid = grid;
 
-    private void Start() {
-        if(maxRoomWidth >= width || maxRoomLength >= height) {
+        if (maxRoomWidth >= gridWidth || maxRoomLength >= gridLength) {
             Debug.LogError("Invalid maxRoomWidth/Length; must be less than width/height!");
             Destroy(this);
         }
 
-		grid = new Grid(this.gameObject.transform.position, tilePrefab, width, height);
         rooms = new List<GameObject>();
         roomsObject = new GameObject("Rooms");
-        GenerateRooms();
-    }
-
-    void GenerateRooms() {
         int numRooms = 0;
         for(int tries = 0; tries < roomPlacementRetries && numRooms < numberOfRooms; tries++) {
 
-            int randomX = Random.Range(0, width - 1);
-            int randomZ = Random.Range(0, height - 1);
+            int randomX = Random.Range(0, gridWidth - 1);
+            int randomZ = Random.Range(0, gridLength - 1);
 
             int randomWidth = Random.Range(minRoomWidth, maxRoomWidth);
             int randomHeight = Random.Range(minRoomLength, maxRoomLength);
@@ -57,7 +54,6 @@ public class RoomGenerator : MonoBehaviour {
     void PlaceRoom(GridCell startingCell, int width, int length) {
         int startingXPosition = startingCell.GetXPosition();
         int startingZPosition = startingCell.GetZPosition();
-        Debug.Log(string.Format("Creating {0} by {1} room at ({2},{3})", width, length, startingXPosition, startingZPosition));
         GameObject room = new GameObject("Room");
         room.transform.parent = roomsObject.transform;
         rooms.Add(room);

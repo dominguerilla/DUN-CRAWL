@@ -30,23 +30,11 @@ public class ExploredCell {
     public GridCell GetCandidateNeighbor() {
         GridCell neighbor = null;
         List<GridCell> candidateNeighbors = GetEmptyNeighbors(this.cell);
-        /*
-        Debug.Log(String.Format("Cell ({0}, {1}) has {2} empty neighbors.", 
-            this.cell.GetXPosition(), 
-            this.cell.GetZPosition(),
-            candidateNeighbors.Count));
-        */
         while(candidateNeighbors.Count > 0 && neighbor == null){
             // check if random neighbor has at least three empty neighbors
             GridCell tempNeighbor = candidateNeighbors[random.Next(candidateNeighbors.Count)];
             List<GridCell> tempEmptyNeighbors = GetEmptyNeighbors(tempNeighbor);
             if(tempEmptyNeighbors.Count >= 3){
-                /*
-                Debug.Log(String.Format("Choosing neighbor ({0}, {1}), with {2} empty neighbors.", 
-                    tempNeighbor.GetXPosition(), 
-                    tempNeighbor.GetZPosition(),
-                    tempEmptyNeighbors.Count));
-                */
                 neighbor = tempNeighbor;
                 break;
             }else{
