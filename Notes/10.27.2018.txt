@@ -8,3 +8,4 @@ Note: it's possible that in the corridor generation phase, it starts off somewhe
 		- finding a proper spot that lets it expand
 	- perhaps if not enough corridor is created, we can restart in another place?
 		- there might be an issue with connectivity, but so long as the new tree can connect to a room that has already been connected by the first, it should be ok
+		- FIXED! The tree generator is a proper flood fill algorithm now, iterating over every cell to attempt to start a tree if one can grow there.

@@ -22,7 +22,6 @@ public class ExploredCell {
         return cell.PlaceInCell(prefab);
     }
     
-
     /// <summary>
     /// Returns a random empty neighbor with three empty neighbors, or null if there are none available.
     /// </summary>

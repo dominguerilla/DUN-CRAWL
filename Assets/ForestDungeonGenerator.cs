@@ -55,8 +55,4 @@ public class ForestDungeonGenerator : MonoBehaviour {
         treeGen.StartCorridorGeneration(this.grid);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
