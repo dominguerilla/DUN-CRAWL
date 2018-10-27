@@ -24,7 +24,6 @@ public class GrowingTreeGenerator : MonoBehaviour {
             Destroy(this);
         }
         random = new System.Random();
-        corridorParent = new GameObject("Corridors");
         StartCoroutine(GenerateCorridors());
     }
 
