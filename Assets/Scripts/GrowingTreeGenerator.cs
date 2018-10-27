@@ -72,33 +72,44 @@ public class GrowingTreeGenerator : MonoBehaviour {
 
     void TrimTree(){
         Debug.Log("Trimming tree...");
-        for(int i = 0; i < trimLength; i++){
+        // initial trimming
+        for (int i = 0; i < trimLength; i++){
             for(int x = 0; x < grid.GetTotalLength(); x++){
                 for(int z = 0; z < grid.GetTotalWidth(); z++){
                     TrimCell(x,z);
                 }
             }
         }
+
+        // removing 'loner' cells
+        for(int x = 0; x < grid.GetTotalLength(); x++){
+            for(int z = 0; z < grid.GetTotalWidth(); z++){
+                TrimCell(x,z,4);
+            }
+        }
         Debug.Log("Finished trimming tree.");
     }
 
-    void TrimCell(int x, int z){
+    // returns true if the cell was trimmed, false otherwise
+    bool TrimCell(int x, int z, int threshold = 3){
         GridCell cell = grid.GetCell(x, z);
         int[] directions = { 0, 1, 2, 3 };
 
-        int numberOfNeighbors = 0;
+        int numberOfEmptyNeighbors = 0;
         foreach (int direction in directions){
             GridCell neighbor = cell.GetNeighbor((GridCell.Neighbor)direction);
             if(neighbor == null || neighbor.IsEmpty()){
-                numberOfNeighbors++;
+                numberOfEmptyNeighbors++;
             }
         }
 
-        if(numberOfNeighbors >=3){
+        if(numberOfEmptyNeighbors >= threshold){
             GameObject floorObj = cell.GetTile();
             Destroy(floorObj);
             cell.ClearCellFlag();
+            return true;
         }
+        return false;
     }
 
     
