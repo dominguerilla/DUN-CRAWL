@@ -11,6 +11,11 @@ public class GrowingTreeGenerator : MonoBehaviour {
 
     Grid grid;
     System.Random random;
+    GameObject corridors;
+
+    private void Start() {
+        corridors = new GameObject("Corridors");
+    }
 
     public void SetGrid(Grid grid){
         this.grid = grid;
@@ -44,8 +49,14 @@ public class GrowingTreeGenerator : MonoBehaviour {
                     continue;
                 }
 
+                GameObject corridor = new GameObject("Corridor");
+                corridor.transform.parent = corridors.transform;
+
                 cellStack.Push(rootECell);
-                rootECell.PlaceInCell(tilePrefab);
+                GameObject corridorRoot = rootECell.PlaceInCell(tilePrefab);
+
+                corridorRoot.transform.parent = corridor.transform;
+
 
                 while(cellStack.Count > 0) {
                     ExploredCell currentCell = cellStack.Peek();
@@ -57,7 +68,8 @@ public class GrowingTreeGenerator : MonoBehaviour {
                         // push neighbor onto stack
                         ExploredCell newCell = new ExploredCell(neighbor, this.random);
                         cellStack.Push(newCell);
-                        newCell.PlaceInCell(tilePrefab);
+                        GameObject branchCell = newCell.PlaceInCell(tilePrefab);
+                        branchCell.transform.parent = corridor.transform;
                         yield return new WaitForEndOfFrame();
                     }
                 }
@@ -81,6 +93,7 @@ public class GrowingTreeGenerator : MonoBehaviour {
             }
         }
 
+        // TODO this doesn't work fully yet. I still see loner cells.
         // removing 'loner' cells
         for(int x = 0; x < grid.GetTotalLength(); x++){
             for(int z = 0; z < grid.GetTotalWidth(); z++){
