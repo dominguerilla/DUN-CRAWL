@@ -77,13 +77,26 @@ public class GrowingTreeGenerator : MonoBehaviour {
             }
         }
 
+        TrimTree();
+        
+        // removes empty corridor objects
+        bool didDelete;
+        do {
+            didDelete = false;
+            foreach (Transform corridor in corridors.transform) {
+                if(corridor.childCount <= 1) {
+                    Destroy(corridor.gameObject);
+                    didDelete = true;
+                }
+                yield return null;
+            }
+
+        }while(didDelete);
 
         Debug.Log("Finished generating corridors.");
-        TrimTree();
     }
 
     void TrimTree(){
-        Debug.Log("Trimming tree...");
         // initial trimming
         for (int i = 0; i < trimLength; i++){
             for(int x = 0; x < grid.GetTotalLength(); x++){

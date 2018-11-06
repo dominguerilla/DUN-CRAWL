@@ -90,4 +90,8 @@ public class RoomGenerator : MonoBehaviour {
         return true;
     }
 
+    public GameObject GetRooms() {
+        return this.roomsObject;
+    }
+
 }
