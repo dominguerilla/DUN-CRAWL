@@ -30,7 +30,6 @@ public class AgentGenerate1 : MonoBehaviour {
     [SerializeField]
     Transform anchor;
     List<GameObject> floorPieces;
-    GameObject[,] grid;
     GameObject floorParent;
     GameObject firstFloor = null;
 
@@ -50,15 +49,12 @@ public class AgentGenerate1 : MonoBehaviour {
         }
 
         floorPieces = new List<GameObject>();
-        grid = new GameObject[width,length];
         floorParent = new GameObject("Floor Pieces");
         StartCoroutine(GenerateDungeon());
     }
 
     IEnumerator GenerateDungeon(){
         // start in the center
-        Vector2 currentPos = new Vector2(width/2, length/2);
-
         float changeDirChance = 0;
         int placedFloorCount = 0;
         int direction = pickDirection(100f);

@@ -1,0 +1,11 @@
+
+Basic dungeon generation working--rooms AND corridors are able to be successfully made. Next step is to create a connection between a room and a corridor; this would entail populating one tile between a corridor and a room such that this new tile has only TWO neighbors (the room and the rest of the corridor).
+
+Note: it's possible that in the corridor generation phase, it starts off somewhere that prevents it from reaching all the rooms/expanding
+	- "reaching all the rooms" -- sometimes it starts off in between two rooms in a corner, and cannot grow past the rooms
+	- this can be mitigated if the number of rooms & their sizes are kept modest
+	- but, in the future, the logic in choosing a first cell should be improved
+		- finding a proper spot that lets it expand
+	- perhaps if not enough corridor is created, we can restart in another place?
+		- there might be an issue with connectivity, but so long as the new tree can connect to a room that has already been connected by the first, it should be ok
+		- FIXED! The tree generator is a proper flood fill algorithm now, iterating over every cell to attempt to start a tree if one can grow there.
