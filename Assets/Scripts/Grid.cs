@@ -36,15 +36,21 @@ public class Grid {
 
     public void ResetGrid()
     {
+        for (int x = 0; x < cells.Length; x++) {
+            for (int z = 0; z < cells[x].Length; z++)
+            {
+                cells[x][z].ClearCell();
+            }
+        }
         cells = null;
         InitializeGrid();
     }
 
-    public GameObject PlaceTileInCell(int x, int z) {
+    public GridCell PlaceTileInCell(int x, int z) {
 
-        GameObject placedObj = cells[x][z].PlaceInCell(tile);
+        cells[x][z].PlaceInCell(tile);
 
-        return placedObj;
+        return cells[x][z];
     }
 
     public Vector3 GetLowerLeftCorner() {

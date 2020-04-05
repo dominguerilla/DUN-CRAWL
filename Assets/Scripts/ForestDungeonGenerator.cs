@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(GrowingTreeGenerator))]
+[RequireComponent(typeof(RoomGenerator))]
 public class ForestDungeonGenerator : MonoBehaviour {
     public GameObject tilePrefab;
 
@@ -33,6 +35,18 @@ public class ForestDungeonGenerator : MonoBehaviour {
 	    treeGen = GetComponent<GrowingTreeGenerator>();
         roomGen = GetComponent<RoomGenerator>();
 
+	}
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GenerateDungeon();
+        }
+    }
+
+    private void InitGenerator()
+    {
         treeGen.tilePrefab = this.tilePrefab;
         roomGen.tilePrefab = this.tilePrefab;
 
@@ -49,10 +63,13 @@ public class ForestDungeonGenerator : MonoBehaviour {
         roomGen.maxRoomLength = this.maxRoomLength;
 
         treeGen.trimLength = this.trimLength;
+    }
 
-
+    public void GenerateDungeon()
+    {
+        InitGenerator();
         roomGen.GenerateRooms(this.grid);
         treeGen.StartCorridorGeneration(this.grid);
-	}
-	
+    }
+
 }
