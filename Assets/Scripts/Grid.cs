@@ -18,16 +18,28 @@ public class Grid {
         this.maxWidth = width;
         this.maxLength = length;
 
-        // populate all cells with empty cell objects
+        InitializeGrid();
+    }
+
+    void InitializeGrid()
+    {
         cells = new GridCell[maxWidth][];
-        for(int i = 0; i < maxWidth; i++) {
+        for (int i = 0; i < maxWidth; i++)
+        {
             cells[i] = new GridCell[maxLength];
-            for(int j = 0; j < maxLength; j++) {
+            for (int j = 0; j < maxLength; j++)
+            {
                 cells[i][j] = new GridCell(this, i, j);
             }
         }
     }
-    
+
+    public void ResetGrid()
+    {
+        cells = null;
+        InitializeGrid();
+    }
+
     public GameObject PlaceTileInCell(int x, int z) {
 
         GameObject placedObj = cells[x][z].PlaceInCell(tile);

@@ -15,7 +15,7 @@ public class GridCell {
     GameObject tile;
     Grid parentGrid;
     Vector3 tileCenter;
-    bool placedInCell = false;
+    bool isOccupied = false;
     
     public GridCell(Grid parentGrid, int xCoordinate, int zCoordinate) {
         this.x = xCoordinate;
@@ -25,7 +25,7 @@ public class GridCell {
     }
 
     public bool IsEmpty() {
-        return !placedInCell;
+        return !isOccupied;
     }
 
     public int GetXPosition() {
@@ -40,11 +40,10 @@ public class GridCell {
         return this.tile;
     }
 
-    public void ClearCellFlag(){
-        if(!this.placedInCell){
-            this.placedInCell = false;
-            this.tile = null;
-        }
+    public void ClearCell(){
+        GameObject.Destroy(this.tile);
+        this.tile = null;
+        this.isOccupied = false;
     }
 
     /// <summary>
@@ -61,7 +60,7 @@ public class GridCell {
         this.tileCenter = gridDLeftCorner + new Vector3((box.size.x) * this.x, gridDLeftCorner.y, (box.size.z) * this.z);
         
         this.tile.transform.position = this.tileCenter;
-        placedInCell = true;
+        isOccupied = true;
         return this.tile;
     }
 

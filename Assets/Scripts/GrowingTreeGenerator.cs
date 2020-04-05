@@ -130,9 +130,7 @@ public class GrowingTreeGenerator : MonoBehaviour {
         }
 
         if(numberOfEmptyNeighbors >= threshold){
-            GameObject floorObj = cell.GetTile();
-            Destroy(floorObj);
-            cell.ClearCellFlag();
+            cell.ClearCell();
             return true;
         }
         return false;
