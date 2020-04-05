@@ -36,6 +36,16 @@ public class RoomGenerator : MonoBehaviour {
         {
             return this.roomObj;
         }
+
+        public void Reset()
+        {
+            foreach (GridCell cell in roomCells)
+            {
+                cell.ClearCell();
+            }
+            GameObject.Destroy(roomObj);
+            roomObj = null;
+        }
     }
 
     public GameObject tilePrefab;
@@ -82,13 +92,19 @@ public class RoomGenerator : MonoBehaviour {
         Debug.Log("Finished placing " + numRooms + " rooms.");
     }
 
-    public void ResetRooms()
+    public void DestroyRooms()
     {
-        foreach (Room room in rooms)
+        if (rooms != null)
         {
-            //room.Reset();
-            throw new System.NotImplementedException();
+            foreach (Room room in rooms)
+            {
+                room.Reset();
+            }
         }
+
+        rooms = null;
+        Destroy(roomObjectList);
+        roomObjectList = null;
     }
 
     void PlaceRoom(Grid grid, GridCell startingCell, int width, int length) {
@@ -124,10 +140,6 @@ public class RoomGenerator : MonoBehaviour {
         }
 
         return true;
-    }
-
-    public GameObject GetRooms() {
-        return this.roomObjectList;
     }
 
 }

@@ -39,9 +39,16 @@ public class ForestDungeonGenerator : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!treeGen.isStillGenerating())
         {
-            GenerateDungeon();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                GenerateDungeon();
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                EraseDungeon();
+            }
         }
     }
 
@@ -65,9 +72,19 @@ public class ForestDungeonGenerator : MonoBehaviour {
         treeGen.trimLength = this.trimLength;
     }
 
+    public void EraseDungeon()
+    {
+        roomGen.DestroyRooms();
+        treeGen.ResetGenerator();
+        grid.ResetGrid();
+    }
+
     public void GenerateDungeon()
     {
+        EraseDungeon();
+
         InitGenerator();
+
         roomGen.GenerateRooms(this.grid);
         treeGen.StartCorridorGeneration(this.grid);
     }
