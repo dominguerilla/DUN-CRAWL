@@ -5,6 +5,49 @@ using UnityEngine.AI;
 
 public class RoomGenerator : MonoBehaviour {
 
+    class Room
+    {
+        List<GridCell> roomCells;
+        GameObject roomObj;
+
+        public Room(Grid grid, int startingXPosition, int startingZPosition, int width, int length)
+        {
+            this.roomCells = new List<GridCell>();
+            roomObj = new GameObject("Room");
+
+            for (int x = startingXPosition; x < startingXPosition + width; x++)
+            {
+                for (int z = startingZPosition; z < startingZPosition + length; z++)
+                {
+                    GridCell roomCell = grid.PlaceTileInCell(x, z);
+                    AddCell(roomCell);
+                    GameObject tile = roomCell.GetTile();
+                    tile.transform.parent = roomObj.transform;
+                }
+            }
+        }
+
+        public void AddCell(GridCell cell)
+        {
+            this.roomCells.Add(cell);
+        }
+
+        public GameObject GetGameObject()
+        {
+            return this.roomObj;
+        }
+
+        public void Reset()
+        {
+            foreach (GridCell cell in roomCells)
+            {
+                cell.ClearCell();
+            }
+            GameObject.Destroy(roomObj);
+            roomObj = null;
+        }
+    }
+
     public GameObject tilePrefab;
     public int gridWidth, gridLength = 100;
 
@@ -17,20 +60,18 @@ public class RoomGenerator : MonoBehaviour {
     public int minRoomLength = 5;
     public int maxRoomLength = 10;
 
-    Grid grid;
-    List<GameObject> rooms;
-    GameObject roomsObject;
+    List<Room> rooms;
+    GameObject roomObjectList;
     
     public void GenerateRooms(Grid grid) {
-        this.grid = grid;
 
         if (maxRoomWidth >= gridWidth || maxRoomLength >= gridLength) {
             Debug.LogError("Invalid maxRoomWidth/Length; must be less than width/height!");
-            Destroy(this);
+            return;
         }
 
-        rooms = new List<GameObject>();
-        roomsObject = new GameObject("Rooms");
+        rooms = new List<Room>();
+        roomObjectList = new GameObject("Rooms");
         int numRooms = 0;
         for(int tries = 0; tries < roomPlacementRetries && numRooms < numberOfRooms; tries++) {
 
@@ -41,8 +82,8 @@ public class RoomGenerator : MonoBehaviour {
             int randomHeight = Random.Range(minRoomLength, maxRoomLength);
 
             GridCell currentCell = grid.GetCell(randomX, randomZ);
-            if(canPlaceRoom(currentCell, randomWidth, randomHeight)){
-                PlaceRoom(currentCell, randomWidth, randomHeight);
+            if(canPlaceRoom(grid, currentCell, randomWidth, randomHeight)){
+                PlaceRoom(grid, currentCell, randomWidth, randomHeight);
                 numRooms++;
             }else {
                 continue;
@@ -51,21 +92,32 @@ public class RoomGenerator : MonoBehaviour {
         Debug.Log("Finished placing " + numRooms + " rooms.");
     }
 
-    void PlaceRoom(GridCell startingCell, int width, int length) {
-        int startingXPosition = startingCell.GetXPosition();
-        int startingZPosition = startingCell.GetZPosition();
-        GameObject room = new GameObject("Room");
-        room.transform.parent = roomsObject.transform;
-        rooms.Add(room);
-        for (int x = startingXPosition; x < startingXPosition + width; x++) {
-            for(int z = startingZPosition; z < startingZPosition + length; z++) {
-                GameObject tile = grid.PlaceTileInCell(x, z);
-                tile.transform.parent = room.transform;
+    public void DestroyRooms()
+    {
+        if (rooms != null)
+        {
+            foreach (Room room in rooms)
+            {
+                room.Reset();
             }
-        } 
+        }
+
+        rooms = null;
+        Destroy(roomObjectList);
+        roomObjectList = null;
     }
 
-    bool canPlaceRoom(GridCell cell, int width, int length) {
+    void PlaceRoom(Grid grid, GridCell startingCell, int width, int length) {
+        int startingXPosition = startingCell.GetXPosition();
+        int startingZPosition = startingCell.GetZPosition();
+
+        Room room = new Room(grid, startingXPosition, startingZPosition, width, length);
+        rooms.Add(room);
+        GameObject roomObj = room.GetGameObject();
+        roomObj.transform.parent = roomObjectList.transform;
+    }
+
+    bool canPlaceRoom(Grid grid, GridCell cell, int width, int length) {
         // check if the proposed room is in bounds
         int xPosition = cell.GetXPosition();
         int zPosition = cell.GetZPosition();
@@ -88,10 +140,6 @@ public class RoomGenerator : MonoBehaviour {
         }
 
         return true;
-    }
-
-    public GameObject GetRooms() {
-        return this.roomsObject;
     }
 
 }

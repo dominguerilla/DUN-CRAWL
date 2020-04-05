@@ -10,10 +10,12 @@ The only adjustment available to his generation algorithm is his 'changeDirDelta
 ![blind digger 2](https://raw.githubusercontent.com/dominguerilla/DUN-CRAWL/develop/Images/Delta2.5/2.PNG)
 ![blind digger 1](https://raw.githubusercontent.com/dominguerilla/DUN-CRAWL/develop/Images/Delta2.5/1.PNG)
 
-## Growing Tree (v0.9: hallways and rooms)
+## Growing Tree (v0.9.2: hallways and rooms)
 This generator is an implementation of the algorithm described by Bob Nystrom. It will generate a random selection of rooms and then fill the empty gaps with corridors.
 
 Currently, corridors and rooms are generated without being connected to each other.
+
+![growing tree 1](https://raw.githubusercontent.com/dominguerilla/DUN-CRAWL/develop/Images/Growing%20Tree%200.9.2.png)
 
 ## Sources
 Shaker, Noor, et al. “Procedural Content Generation in Games.” Procedural Content Generation in Games, pcgbook.com/.

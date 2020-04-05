@@ -12,27 +12,38 @@ public class GrowingTreeGenerator : MonoBehaviour {
     Grid grid;
     System.Random random;
     GameObject corridors;
+    bool isGenerating = false;
 
-    private void Start() {
-        corridors = new GameObject("Corridors");
-    }
-
-    public void SetGrid(Grid grid){
-        this.grid = grid;
-    }
-    
     public void StartCorridorGeneration(Grid grid){
-        this.grid = grid;
+        if (!isGenerating)
+        {
+            this.grid = grid;
+            corridors = new GameObject("Corridors");
 
-        if(!tilePrefab) {
-            Debug.LogError("Tile prefab must be specified!");
-            Destroy(this);
+            if (!tilePrefab)
+            {
+                Debug.LogError("Tile prefab must be specified!");
+                Destroy(this);
+            }
+            random = new System.Random();
+            StartCoroutine(GenerateCorridors());
         }
-        random = new System.Random();
-        StartCoroutine(GenerateCorridors());
+        else
+        {
+            Debug.LogError("Tree generator is still running!");
+        }
+    }
+
+    public void ResetGenerator()
+    {
+        this.grid = null;
+        this.random = null;
+        Destroy(corridors);
+        corridors = null;
     }
 
     IEnumerator GenerateCorridors() {
+        isGenerating = true;
         Stack<ExploredCell> cellStack = new Stack<ExploredCell>();
         // we don't start trees at the edges of grid
         for(int X = 1; X < gridWidth - 1; X++){
@@ -40,12 +51,8 @@ public class GrowingTreeGenerator : MonoBehaviour {
                 ExploredCell rootECell = new ExploredCell(grid.GetCell(X, Z), this.random);
 
                 // check if this cell is a valid one to start
-                GridCell rootCell = rootECell.GetCell();
-                if(!rootCell.IsEmpty()){
-                    continue;
-                }
-                List<GridCell> emptyNeighbors = rootECell.GetEmptyNeighbors(rootCell);
-                if(emptyNeighbors.Count < 4){
+                if (!isValidRootCell(rootECell))
+                {
                     continue;
                 }
 
@@ -78,22 +85,46 @@ public class GrowingTreeGenerator : MonoBehaviour {
         }
 
         TrimTree();
-        
-        // removes empty corridor objects
+
+        RemoveEmptyCorridorObjects();
+
+        isGenerating = false;
+        Debug.Log("Finished generating corridors.");
+    }
+
+    IEnumerator RemoveEmptyCorridorObjects()
+    {
         bool didDelete;
-        do {
+        do
+        {
             didDelete = false;
-            foreach (Transform corridor in corridors.transform) {
-                if(corridor.childCount <= 1) {
+            foreach (Transform corridor in corridors.transform)
+            {
+                if (corridor.childCount <= 1)
+                {
                     Destroy(corridor.gameObject);
                     didDelete = true;
                 }
                 yield return null;
             }
 
-        }while(didDelete);
+        } while (didDelete);
+    }
 
-        Debug.Log("Finished generating corridors.");
+    bool isValidRootCell(ExploredCell rootECell)
+    {
+        GridCell cell = rootECell.GetCell();
+
+        if (!cell.IsEmpty())
+        {
+            return false;
+        }
+        List<GridCell> emptyNeighbors = rootECell.GetEmptyNeighbors(cell);
+        if (emptyNeighbors.Count < 4)
+        {
+            return false;
+        }
+        return true;
     }
 
     void TrimTree(){
@@ -130,13 +161,14 @@ public class GrowingTreeGenerator : MonoBehaviour {
         }
 
         if(numberOfEmptyNeighbors >= threshold){
-            GameObject floorObj = cell.GetTile();
-            Destroy(floorObj);
-            cell.ClearCellFlag();
+            cell.ClearCell();
             return true;
         }
         return false;
     }
 
-    
+    public bool isStillGenerating()
+    {
+        return isGenerating;
+    }
 }
